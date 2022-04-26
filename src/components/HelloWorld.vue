@@ -185,6 +185,10 @@ export default {
             };
             if (logic_abi[i].inputs != undefined) {
               for (let j = 0; j < logic_abi[i].inputs.length; j++) {
+                if (logic_abi[i].inputs[j].name === undefined) {
+                  logic_abi[i].inputs[j]['name'] = j;
+                }
+
                 form[logic_abi[i].inputs[j].name] = null;
               }
             }

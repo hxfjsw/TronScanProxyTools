@@ -43,7 +43,8 @@
             </template>
             <el-form :model="forms[item.name]" label-width="120px">
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
-                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""/>
+                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""
+                          v-model="forms[item.name][input.name]"/>
               </div>
               <el-button class="mt-3" type="info" @click="query($event,item.name)">Query</el-button>
               <div class="m-2">{{ forms[item.name].result }}</div>
@@ -53,20 +54,22 @@
       </div>
 
 
-      <div class="m-5" v-if="type==='write'">
-        <div v-for="item in write_functions" :key="item.name">
+      <div class="m-5 flex flex-col" v-if="type==='write'">
+        <div v-for="(item) in write_functions" :key="item.name">
           <el-card class="box-card m-2">
             <template #header>
               <div class="card-header">
                 <span>{{ item.name }}</span>
               </div>
             </template>
-            <div class="w-8/12		">
+            <el-form :model="forms[item.name]" label-width="120px">
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
-                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""/>
+                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""
+                          v-model="forms[item.name][input.name]"/>
               </div>
-              <el-button class="mt-3" type="primary" @click="write">Write</el-button>
-            </div>
+              <el-button class="mt-3" type="primary" @click="write($event,item.name)">Query</el-button>
+              <div class="m-2">{{ forms[item.name].result }}</div>
+            </el-form>
           </el-card>
         </div>
       </div>
@@ -118,15 +121,42 @@ export default {
       query: async (e, name) => {
         // console.log('read', e, name);
         const function_abi = read_functions.value[name];
-        console.log(function_abi);
-        const result = await proxy_contract[name]().call(
+        const form = forms.value[name];
+        // console.log(function_abi);
+        // console.log(form);
+        let args = [];
+        if (function_abi.inputs !== undefined) {
+          for (let i = 0; i < function_abi.inputs.length; i++) {
+            args.push(form[function_abi.inputs[i].name]);
+          }
+        }
+        const result = await proxy_contract[name].apply(this, args).call(
             {}
         );
-        console.log(result);
+        // console.log(result);
         forms.value[name].result = result;
       },
       write: async (e, name) => {
         console.log('write', e, name);
+        const function_abi = write_functions.value[name];
+        const form = forms.value[name];
+        // console.log(function_abi);
+        // console.log(form);
+        let args = [];
+        if (function_abi.inputs !== undefined) {
+          for (let i = 0; i < function_abi.inputs.length; i++) {
+            args.push(form[function_abi.inputs[i].name]);
+          }
+        }
+        const result = await proxy_contract[name].apply(this, args).send(
+            {
+              feeLimit: 100000000,
+              callValue: 0,
+              shouldPollResponse: true
+            }
+        );
+        console.log(result);
+        forms.value[name].result = result;
       },
       handleClick: async () => {
 
@@ -150,13 +180,20 @@ export default {
               write_functions.value[logic_abi[i].name] = (logic_abi[i]);
             }
 
-            forms.value[logic_abi[i].name] = {
+            let form = {
               result: '',
             };
+            if (logic_abi[i].inputs != undefined) {
+              for (let j = 0; j < logic_abi[i].inputs.length; j++) {
+                form[logic_abi[i].inputs[j].name] = null;
+              }
+            }
+            // console.log(form);
+            forms.value[logic_abi[i].name] = form;
           }
         }
 
-        console.log(logic_contract);
+        console.log(forms.value);
       }
     }
   }

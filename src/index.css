@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.test{
+    @apply font-bold;
+}
+
+html {
+    scroll-behavior: smooth;
+}

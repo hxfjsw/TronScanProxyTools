@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col min-h-screen overflow-hidden scroll-smooth hover:scroll-auto bg-gray-100">
-    <section class="relative max-w-6xl mx-auto px-4 sm:px-6 m-20 bg-white p-6 shadow-lg	rounded-md" id="navigation">
+  <div class="flex flex-col space-y-4 min-h-screen overflow-hidden scroll-smooth hover:scroll-auto bg-gray-100 p-5">
+    <section class=" mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col items-center" id="navigation">
 
       <div class="m-5">
         Proxy Contract Address:
@@ -20,44 +20,55 @@
 
     </section>
 
-    <section class="relative max-w-6xl mx-auto px-4 sm:px-6 m-20 bg-white p-6 shadow-lg	rounded-md" id="home">
+    <section class="mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col items-center" id="home">
 
       <div>
         <el-button type="primary" @click="read">Read as proxy</el-button>
         <el-button type="primary" @click="white">Write as proxy</el-button>
       </div>
 
-      <div class="m-5" v-if="type==='read'">
+
+      <div class="m-5 flex flex-col" v-if="type==='read'">
         <div v-for="item in read_functions" :key="item.name">
-
-
           <el-card class="box-card m-2">
             <template #header>
               <div class="card-header">
                 <span>{{ item.name }}</span>
               </div>
             </template>
-            <el-input/>
-            <el-button type="info" >Query</el-button>
-
-            <!--            <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>-->
+            <div class="w-8/12		">
+              <div class="m-2" v-for="input in item.inputs" :key="input.name">
+                <el-input :placeholder="input.name" class=""/>
+              </div>
+              <el-button class="mt-3" type="info">Query</el-button>
+            </div>
           </el-card>
-
-
-          <!--          <span class="font-bold">{{ item.name }}</span>-->
-          <!--          <el-input />-->
         </div>
       </div>
 
-      <div class="m-5" v-if="type==='white'">
+
+      <div class="m-5" v-if="type==='write'">
         <div v-for="item in write_functions" :key="item.name">
-          <span class="font-bold">{{ item.name }}</span>
-          <el-input/>
+          <el-card class="box-card m-2">
+            <template #header>
+              <div class="card-header">
+                <span>{{ item.name }}</span>
+              </div>
+            </template>
+            <div class="w-8/12		">
+              <div class="m-2" v-for="input in item.inputs" :key="input.name">
+                <el-input :placeholder="input.name" class=""/>
+              </div>
+              <el-button class="mt-3" type="primary">Write</el-button>
+            </div>
+          </el-card>
         </div>
       </div>
 
     </section>
+
   </div>
+
 </template>
 
 
@@ -72,7 +83,7 @@ const logicContractAddress = ref('TRPqQYtqtvW8XNuxctLxGgSDTuSUDX3GeJ');
 const read_functions = ref([]);
 const write_functions = ref([]);
 
-const type = ref('read');
+const type = ref('write');
 
 export default {
   name: 'HelloWorld',
@@ -83,8 +94,8 @@ export default {
   setup() {
     return {
       type: type,
-      read_functions,
-      write_functions,
+      read_functions: read_functions,
+      write_functions:write_functions,
       proxyContractAddress: proxyContractAddress,
       logicContractAddress: logicContractAddress,
       read: async () => {
@@ -120,3 +131,15 @@ export default {
   }
 }
 </script>
+
+<style type="text/css">
+
+.box-card {
+  /*display: flex;*/
+  /*flex: 1 1 auto;*/
+  /*margin-left: 0;*/
+  /*margin-right: 0;*/
+  /*width: auto;*/
+
+}
+</style>

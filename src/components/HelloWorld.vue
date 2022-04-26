@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-4 min-h-screen overflow-hidden scroll-smooth hover:scroll-auto bg-gray-100 p-5">
-    <section class=" mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col items-center" id="navigation">
+    <section class=" mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col " id="navigation">
 
       <div class="m-5">
         Proxy Contract Address:

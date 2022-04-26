@@ -20,11 +20,16 @@
 
     </section>
 
-    <section class="mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col items-center" id="home">
+    <section class="mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col " id="home">
 
-      <div>
-        <el-button type="primary" @click="read">Read as proxy</el-button>
-        <el-button type="primary" @click="white">Write as proxy</el-button>
+      <div v-if="type==='read'">
+        <el-button type="primary" @click="select_read">Read as proxy</el-button>
+        <el-button type="info" @click="select_white">Write as proxy</el-button>
+      </div>
+
+      <div v-if="type==='write'">
+        <el-button type="info" @click="select_read">Read as proxy</el-button>
+        <el-button type="primary" @click="select_white">Write as proxy</el-button>
       </div>
 
 
@@ -36,11 +41,11 @@
                 <span>{{ item.name }}</span>
               </div>
             </template>
-            <div class="w-8/12		">
+            <div class="">
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
                 <el-input :placeholder="input.name" class=""/>
               </div>
-              <el-button class="mt-3" type="info">Query</el-button>
+              <el-button class="mt-3" type="info" @click="query($event,item.name)">Query</el-button>
             </div>
           </el-card>
         </div>
@@ -59,7 +64,7 @@
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
                 <el-input :placeholder="input.name" class=""/>
               </div>
-              <el-button class="mt-3" type="primary">Write</el-button>
+              <el-button class="mt-3" type="primary" @click="write">Write</el-button>
             </div>
           </el-card>
         </div>
@@ -83,7 +88,8 @@ const logicContractAddress = ref('TRPqQYtqtvW8XNuxctLxGgSDTuSUDX3GeJ');
 const read_functions = ref([]);
 const write_functions = ref([]);
 
-const type = ref('write');
+const type = ref('read');
+const forms = ref({});
 
 export default {
   name: 'HelloWorld',
@@ -94,15 +100,22 @@ export default {
   setup() {
     return {
       type: type,
+      forms: forms,
       read_functions: read_functions,
-      write_functions:write_functions,
+      write_functions: write_functions,
       proxyContractAddress: proxyContractAddress,
       logicContractAddress: logicContractAddress,
-      read: async () => {
+      select_read: async () => {
         type.value = 'read';
       },
-      white: async () => {
+      select_white: async () => {
         type.value = 'write';
+      },
+      query: async (e, name) => {
+        console.log('read',e, name);
+      },
+      write: async (e, name) => {
+        console.log('write', e, name);
       },
       handleClick: async () => {
 

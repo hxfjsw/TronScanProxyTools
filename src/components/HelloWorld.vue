@@ -34,19 +34,20 @@
 
 
       <div class="m-5 flex flex-col" v-if="type==='read'">
-        <div v-for="item in read_functions" :key="item.name">
+        <div v-for="(item) in read_functions" :key="item.name">
           <el-card class="box-card m-2">
             <template #header>
               <div class="card-header">
                 <span>{{ item.name }}</span>
               </div>
             </template>
-            <div class="">
+            <el-form :model="forms[item.name]" label-width="120px">
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
-                <el-input :placeholder="input.name" class=""/>
+                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""/>
               </div>
               <el-button class="mt-3" type="info" @click="query($event,item.name)">Query</el-button>
-            </div>
+              <div class="m-2">{{ forms[item.name].result }}</div>
+            </el-form>
           </el-card>
         </div>
       </div>
@@ -62,7 +63,7 @@
             </template>
             <div class="w-8/12		">
               <div class="m-2" v-for="input in item.inputs" :key="input.name">
-                <el-input :placeholder="input.name" class=""/>
+                <el-input :placeholder="input.name + '(' + input.type + ')'" class=""/>
               </div>
               <el-button class="mt-3" type="primary" @click="write">Write</el-button>
             </div>
@@ -122,6 +123,7 @@ export default {
             {}
         );
         console.log(result);
+        forms.value[name].result = result;
       },
       write: async (e, name) => {
         console.log('write', e, name);
@@ -147,6 +149,10 @@ export default {
             } else {
               write_functions.value[logic_abi[i].name] = (logic_abi[i]);
             }
+
+            forms.value[logic_abi[i].name] = {
+              result: '',
+            };
           }
         }
 

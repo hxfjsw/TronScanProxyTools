@@ -83,7 +83,7 @@
 
 <script>
 import {ref} from 'vue'
-// import {ElNotification} from 'element-plus'
+import {ElNotification} from 'element-plus'
 // import axios from "axios";
 
 const proxyContractAddress = ref('TJzar3ayukrPcHDY7py7VYmkoeKvJ7sfwC');
@@ -119,85 +119,112 @@ export default {
         type.value = 'write';
       },
       query: async (e, name) => {
-        // console.log('read', e, name);
-        const function_abi = read_functions.value[name];
-        const form = forms.value[name];
-        // console.log(function_abi);
-        // console.log(form);
-        let args = [];
-        if (function_abi.inputs !== undefined) {
-          for (let i = 0; i < function_abi.inputs.length; i++) {
-            args.push(form[function_abi.inputs[i].name]);
+        try {
+          // console.log('read', e, name);
+          const function_abi = read_functions.value[name];
+          const form = forms.value[name];
+          // console.log(function_abi);
+          // console.log(form);
+          let args = [];
+          if (function_abi.inputs !== undefined) {
+            for (let i = 0; i < function_abi.inputs.length; i++) {
+              args.push(form[function_abi.inputs[i].name]);
+            }
           }
+          const result = await proxy_contract[name].apply(this, args).call(
+              {}
+          );
+          // console.log(result);
+          forms.value[name].result = result;
+        } catch (e) {
+          ElNotification.error({
+            title: 'Error',
+            message: e.toString(),
+            duration: 0,
+          })
+          console.error(e);
         }
-        const result = await proxy_contract[name].apply(this, args).call(
-            {}
-        );
-        // console.log(result);
-        forms.value[name].result = result;
       },
       write: async (e, name) => {
-        console.log('write', e, name);
-        const function_abi = write_functions.value[name];
-        const form = forms.value[name];
-        // console.log(function_abi);
-        // console.log(form);
-        let args = [];
-        if (function_abi.inputs !== undefined) {
-          for (let i = 0; i < function_abi.inputs.length; i++) {
-            args.push(form[function_abi.inputs[i].name]);
-          }
-        }
-        const result = await proxy_contract[name].apply(this, args).send(
-            {
-              feeLimit: 100000000,
-              callValue: 0,
-              shouldPollResponse: true
+        try {
+          console.log('write', e, name);
+          const function_abi = write_functions.value[name];
+          const form = forms.value[name];
+          // console.log(function_abi);
+          // console.log(form);
+          let args = [];
+          if (function_abi.inputs !== undefined) {
+            for (let i = 0; i < function_abi.inputs.length; i++) {
+              args.push(form[function_abi.inputs[i].name]);
             }
-        );
-        console.log(result);
-        forms.value[name].result = result;
+          }
+          const result = await proxy_contract[name].apply(this, args).send(
+              {
+                feeLimit: 100000000,
+                callValue: 0,
+                shouldPollResponse: true
+              }
+          );
+          console.log(result);
+          forms.value[name].result = result;
+        } catch (e) {
+          ElNotification.error({
+            title: 'Error',
+            message: e.toString(),
+            duration: 0,
+          })
+          console.error(e);
+        }
       },
       handleClick: async () => {
 
-        logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
-        // proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
-        proxy_contract = await window.tronWeb.contract(
-            logic_contract.abi,
-            proxyContractAddress.value);
+        try {
+          logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
+          // proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
+          proxy_contract = await window.tronWeb.contract(
+              logic_contract.abi,
+              proxyContractAddress.value);
 
-        // console.log('click', logicContractAddress, proxyContractAddress);
-        console.log('logic', logic_contract);
-        console.log('proxy', proxy_contract);
+          // console.log('click', logicContractAddress, proxyContractAddress);
+          console.log('logic', logic_contract);
+          console.log('proxy', proxy_contract);
 
-        const logic_abi = logic_contract.abi;
+          const logic_abi = logic_contract.abi;
 
-        for (let i = 0; i < logic_abi.length; i++) {
-          if (logic_abi[i].type === 'function') {
-            if (logic_abi[i].stateMutability === 'view' || logic_abi[i].stateMutability === 'pure') {
-              read_functions.value[logic_abi[i].name] = (logic_abi[i]);
-            } else {
-              write_functions.value[logic_abi[i].name] = (logic_abi[i]);
-            }
-
-            let form = {
-              result: '',
-            };
-            if (logic_abi[i].inputs != undefined) {
-              for (let j = 0; j < logic_abi[i].inputs.length; j++) {
-                if (logic_abi[i].inputs[j].name === undefined) {
-                  logic_abi[i].inputs[j]['name'] = j;
-                }
-
-                form[logic_abi[i].inputs[j].name] = null;
+          for (let i = 0; i < logic_abi.length; i++) {
+            if (logic_abi[i].type === 'function') {
+              if (logic_abi[i].stateMutability === 'view' || logic_abi[i].stateMutability === 'pure') {
+                read_functions.value[logic_abi[i].name] = (logic_abi[i]);
+              } else {
+                write_functions.value[logic_abi[i].name] = (logic_abi[i]);
               }
-            }
-            // console.log(form);
-            forms.value[logic_abi[i].name] = form;
-          }
-        }
 
-        console.log(forms.value);
+              let form = {
+                result: '',
+              };
+              if (logic_abi[i].inputs != undefined) {
+                for (let j = 0; j < logic_abi[i].inputs.length; j++) {
+                  if (logic_abi[i].inputs[j].name === undefined) {
+                    logic_abi[i].inputs[j]['name'] = j;
+                  }
+
+                  form[logic_abi[i].inputs[j].name] = null;
+                }
+              }
+              // console.log(form);
+              forms.value[logic_abi[i].name] = form;
+            }
+          }
+
+          console.log(forms.value);
+        } catch (e) {
+          ElNotification.error({
+            title: 'Error',
+            message: e.toString(),
+            duration: 0,
+          })
+          console.error(e);
+        }
       }
     }
   }

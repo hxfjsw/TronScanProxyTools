@@ -85,11 +85,14 @@ import {ref} from 'vue'
 const proxyContractAddress = ref('TJzar3ayukrPcHDY7py7VYmkoeKvJ7sfwC');
 const logicContractAddress = ref('TRPqQYtqtvW8XNuxctLxGgSDTuSUDX3GeJ');
 
-const read_functions = ref([]);
-const write_functions = ref([]);
+const read_functions = ref({});
+const write_functions = ref({});
 
 const type = ref('read');
 const forms = ref({});
+
+let logic_contract;
+let proxy_contract;
 
 export default {
   name: 'HelloWorld',
@@ -112,15 +115,24 @@ export default {
         type.value = 'write';
       },
       query: async (e, name) => {
-        console.log('read',e, name);
+        // console.log('read', e, name);
+        const function_abi = read_functions.value[name];
+        console.log(function_abi);
+        const result = await proxy_contract[name]().call(
+            {}
+        );
+        console.log(result);
       },
       write: async (e, name) => {
         console.log('write', e, name);
       },
       handleClick: async () => {
 
-        let logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
-        let proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
+        logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
+        // proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
+        proxy_contract = await window.tronWeb.contract(
+            logic_contract.abi,
+            proxyContractAddress.value);
 
         // console.log('click', logicContractAddress, proxyContractAddress);
         console.log('logic', logic_contract);
@@ -131,14 +143,14 @@ export default {
         for (let i = 0; i < logic_abi.length; i++) {
           if (logic_abi[i].type === 'function') {
             if (logic_abi[i].stateMutability === 'view' || logic_abi[i].stateMutability === 'pure') {
-              read_functions.value.push(logic_abi[i]);
+              read_functions.value[logic_abi[i].name] = (logic_abi[i]);
             } else {
-              write_functions.value.push(logic_abi[i]);
+              write_functions.value[logic_abi[i].name] = (logic_abi[i]);
             }
           }
         }
 
-        console.log(write_functions.value);
+        console.log(logic_contract);
       }
     }
   }

@@ -29,7 +29,30 @@
 
       <div class="m-5" v-if="type==='read'">
         <div v-for="item in read_functions" :key="item.name">
+
+
+          <el-card class="box-card m-2">
+            <template #header>
+              <div class="card-header">
+                <span>{{ item.name }}</span>
+              </div>
+            </template>
+            <el-input/>
+            <el-button type="info" >Query</el-button>
+
+            <!--            <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>-->
+          </el-card>
+
+
+          <!--          <span class="font-bold">{{ item.name }}</span>-->
+          <!--          <el-input />-->
+        </div>
+      </div>
+
+      <div class="m-5" v-if="type==='white'">
+        <div v-for="item in write_functions" :key="item.name">
           <span class="font-bold">{{ item.name }}</span>
+          <el-input/>
         </div>
       </div>
 
@@ -83,19 +106,15 @@ export default {
 
         for (let i = 0; i < logic_abi.length; i++) {
           if (logic_abi[i].type === 'function') {
-            // read_functions.value.push(logic_abi[i]);
-            // console.log(logic_abi[i].stateMutability);
-
-            if(logic_abi[i].stateMutability === 'view' || logic_abi[i].stateMutability === 'pure') {
+            if (logic_abi[i].stateMutability === 'view' || logic_abi[i].stateMutability === 'pure') {
               read_functions.value.push(logic_abi[i]);
-            }else{
+            } else {
               write_functions.value.push(logic_abi[i]);
             }
-
           }
-          // console.log(logic_abi[i]);
         }
 
+        console.log(write_functions.value);
       }
     }
   }

@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service docs",
     "lint": "vue-cli-service lint",
-    "build_dev": "vue-cli-service build --mode development"
+    "build_dev": "vue-cli-service docs --mode development"
   },
   "dependencies": {
     "@headlessui/vue": "^1.5.0",

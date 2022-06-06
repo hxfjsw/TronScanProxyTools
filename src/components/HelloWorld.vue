@@ -4,24 +4,103 @@
 
       <div class="m-5">
         Proxy Contract Address:
-        <el-input placeholder="0x.." v-model="proxyContractAddress"/>
+        <div class="flex space-w-4">
+          <el-input placeholder="0x.." v-model="proxyContractAddress"/>
+          <a target="_blank" :href="getTronscanHost()+proxyContractAddress">
+            <svg class="link-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+              <path d="
+              M853.333333 469.333333a42.666667 42.666667 0 0 0-42.666666
+              42.666667v256a42.666667 42.666667 0 0 1-42.666667 42.666667H256a42.666667
+              42.666667 0 0 1-42.666667-42.666667V256a42.666667
+              42.666667 0 0 1 42.666667-42.666667h256a42.666667 42.666667
+              0 0 0 0-85.333333H256a128 128 0 0 0-128 128v512a128 128
+              0 0 0 128 128h512a128 128 0 0 0 128-128v-256a42.666667
+              42.666667 0 0 0-42.666667-42.666667z
+            " fill="currentColor">
+              </path>
+              <path d="
+              M682.666667 213.333333h67.413333l-268.373333 267.946667a42.666667
+              42.666667 0 0 0 0 60.586667 42.666667 42.666667
+              0 0 0 60.586666 0L810.666667 273.92V341.333333a42.666667
+              42.666667 0 0 0 42.666666 42.666667 42.666667 42.666667 0 0 0
+              42.666667-42.666667V170.666667a42.666667 42.666667 0 0
+              0-42.666667-42.666667h-170.666666a42.666667
+              42.666667 0 0 0 0 85.333333z
+            " fill="currentColor">
+              </path>
+            </svg>
+          </a>
+        </div>
       </div>
 
-      <div class="m-5">
+      <div class="m-5 ">
         Logic Contract Address:
-        <el-input placeholder="0x.." v-model="logicContractAddress" disabled/>
+        <div class="flex space-w-4">
+          <el-input placeholder="0x.." v-model="logicContractAddress" disabled/>
+          <a target="_blank" :href="getTronscanHost()+logicContractAddress">
+            <svg class="link-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+              <path d="
+              M853.333333 469.333333a42.666667 42.666667 0 0 0-42.666666
+              42.666667v256a42.666667 42.666667 0 0 1-42.666667 42.666667H256a42.666667
+              42.666667 0 0 1-42.666667-42.666667V256a42.666667
+              42.666667 0 0 1 42.666667-42.666667h256a42.666667 42.666667
+              0 0 0 0-85.333333H256a128 128 0 0 0-128 128v512a128 128
+              0 0 0 128 128h512a128 128 0 0 0 128-128v-256a42.666667
+              42.666667 0 0 0-42.666667-42.666667z
+            " fill="currentColor">
+              </path>
+              <path d="
+              M682.666667 213.333333h67.413333l-268.373333 267.946667a42.666667
+              42.666667 0 0 0 0 60.586667 42.666667 42.666667
+              0 0 0 60.586666 0L810.666667 273.92V341.333333a42.666667
+              42.666667 0 0 0 42.666666 42.666667 42.666667 42.666667 0 0 0
+              42.666667-42.666667V170.666667a42.666667 42.666667 0 0
+              0-42.666667-42.666667h-170.666666a42.666667
+              42.666667 0 0 0 0 85.333333z
+            " fill="currentColor">
+              </path>
+            </svg>
+          </a>
+        </div>
+
       </div>
 
       <div class="m-5">
         Admin Contract Address:
-        <el-input placeholder="0x.." v-model="adminContractAddress" disabled/>
+        <div class="flex space-w-4">
+          <el-input placeholder="0x.." v-model="adminContractAddress" disabled/>
+          <a target="_blank" :href="getTronscanHost()+adminContractAddress">
+            <svg class="link-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+              <path d="
+              M853.333333 469.333333a42.666667 42.666667 0 0 0-42.666666
+              42.666667v256a42.666667 42.666667 0 0 1-42.666667 42.666667H256a42.666667
+              42.666667 0 0 1-42.666667-42.666667V256a42.666667
+              42.666667 0 0 1 42.666667-42.666667h256a42.666667 42.666667
+              0 0 0 0-85.333333H256a128 128 0 0 0-128 128v512a128 128
+              0 0 0 128 128h512a128 128 0 0 0 128-128v-256a42.666667
+              42.666667 0 0 0-42.666667-42.666667z
+            " fill="currentColor">
+              </path>
+              <path d="
+              M682.666667 213.333333h67.413333l-268.373333 267.946667a42.666667
+              42.666667 0 0 0 0 60.586667 42.666667 42.666667
+              0 0 0 60.586666 0L810.666667 273.92V341.333333a42.666667
+              42.666667 0 0 0 42.666666 42.666667 42.666667 42.666667 0 0 0
+              42.666667-42.666667V170.666667a42.666667 42.666667 0 0
+              0-42.666667-42.666667h-170.666666a42.666667
+              42.666667 0 0 0 0 85.333333z
+            " fill="currentColor">
+              </path>
+            </svg>
+          </a>
+        </div>
       </div>
 
       <div class="m-5">
         <el-button type="primary" class="bg-blue-400" @click="handleClick">
           Submit
         </el-button>
-<!--        <button  @click="handleClick" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>-->
+        <!--        <button  @click="handleClick" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>-->
 
       </div>
 
@@ -199,6 +278,14 @@ export default {
             duration: 0,
           })
           console.error(e);
+        }
+      },
+      getTronscanHost: () => {
+        let host = window.tronWeb.fullNode.host;
+        if (host === 'https://api.shasta.trongrid.io') {
+          return 'https://shasta.tronscan.io/#/address/';
+        } else {
+          return 'https://tronscan.io/#/address/';
         }
       },
       handleClick: async () => {

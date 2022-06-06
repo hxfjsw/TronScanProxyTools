@@ -18,9 +18,11 @@
       </div>
 
       <div class="m-5">
-        <el-button type="primary" @click="handleClick">
+        <el-button type="primary" class="bg-blue-400" @click="handleClick">
           Submit
         </el-button>
+<!--        <button  @click="handleClick" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Submit</button>-->
+
       </div>
 
     </section>
@@ -28,13 +30,13 @@
     <section class="mx-5 bg-white p-6 shadow-lg	rounded-md flex flex-col " id="home">
 
       <div v-if="type==='read'">
-        <el-button type="primary" @click="select_read">Read as proxy</el-button>
-        <el-button type="info" @click="select_white">Write as proxy</el-button>
+        <el-button type="primary" class="bg-blue-400" @click="select_read">Read as proxy</el-button>
+        <el-button type="info" class="bg-gray-400" @click="select_white">Write as proxy</el-button>
       </div>
 
       <div v-if="type==='write'">
-        <el-button type="info" @click="select_read">Read as proxy</el-button>
-        <el-button type="primary" @click="select_white">Write as proxy</el-button>
+        <el-button type="info" class="bg-gray-400" @click="select_read">Read as proxy</el-button>
+        <el-button type="primary" class="bg-blue-400" @click="select_white">Write as proxy</el-button>
       </div>
 
 
@@ -51,7 +53,7 @@
                 <el-input :placeholder="input.name + '(' + input.type + ')'" class=""
                           v-model="forms[item.name][input.name]"/>
               </div>
-              <el-button class="mt-3" type="info" @click="query($event,item.name)">Query</el-button>
+              <el-button class="bg-gray-400 mt-3" type="info" @click="query($event,item.name)">Query</el-button>
               <div class="m-2">{{ forms[item.name].result }}</div>
             </el-form>
           </el-card>
@@ -72,7 +74,7 @@
                 <el-input :placeholder="input.name + '(' + input.type + ')'" class=""
                           v-model="forms[item.name][input.name]"/>
               </div>
-              <el-button class="mt-3" type="primary" @click="write($event,item.name)">Query</el-button>
+              <el-button class="bg-blue-400 mt-3" type="primary" @click="write($event,item.name)">Query</el-button>
               <div class="m-2">{{ forms[item.name].result }}</div>
             </el-form>
           </el-card>

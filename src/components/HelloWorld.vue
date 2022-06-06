@@ -9,7 +9,12 @@
 
       <div class="m-5">
         Logic Contract Address:
-        <el-input placeholder="0x.." v-model="logicContractAddress"/>
+        <el-input placeholder="0x.." v-model="logicContractAddress" disabled/>
+      </div>
+
+      <div class="m-5">
+        Admin Contract Address:
+        <el-input placeholder="0x.." v-model="adminContractAddress" disabled/>
       </div>
 
       <div class="m-5">
@@ -84,10 +89,11 @@
 <script>
 import {ref} from 'vue'
 import {ElNotification} from 'element-plus'
-// import axios from "axios";
+import axios from "axios";
 
 const proxyContractAddress = ref('TJzar3ayukrPcHDY7py7VYmkoeKvJ7sfwC');
-const logicContractAddress = ref('TRPqQYtqtvW8XNuxctLxGgSDTuSUDX3GeJ');
+const logicContractAddress = ref('');
+const adminContractAddress = ref('');
 
 const read_functions = ref({});
 const write_functions = ref({});
@@ -97,6 +103,22 @@ const forms = ref({});
 
 let logic_contract;
 let proxy_contract;
+
+let getFirstEvent = async function (proxyContractAddress) {
+  let host = window.tronWeb.fullNode.host;
+  let url = host + '/v1/contracts/' + proxyContractAddress + '/transactions?order_by=block_timestamp,asc&limit=1';
+  let response = await axios.get(url);
+  let context = response.data;
+  let txid = context.data[0].txID;
+  let events = await window.tronWeb.getEventByTransactionID(txid);
+  let newAdmin = events[0].result.newAdmin;
+  let implementation = events[2].result.implementation;
+  newAdmin = window.tronWeb.address.fromHex(newAdmin);
+  implementation = window.tronWeb.address.fromHex(implementation)
+  // console.log(newAdmin, implementation);
+  return [newAdmin, implementation];
+}
+
 
 export default {
   name: 'HelloWorld',
@@ -112,6 +134,7 @@ export default {
       write_functions: write_functions,
       proxyContractAddress: proxyContractAddress,
       logicContractAddress: logicContractAddress,
+      adminContractAddress: adminContractAddress,
       select_read: async () => {
         type.value = 'read';
       },
@@ -179,7 +202,14 @@ export default {
       handleClick: async () => {
 
         try {
+
+          let address = await getFirstEvent(proxyContractAddress.value);
+
+          adminContractAddress.value = address[0];
+          logicContractAddress.value = address[1];
+
           logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
+
           // proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
           proxy_contract = await window.tronWeb.contract(
               logic_contract.abi,
@@ -225,7 +255,8 @@ export default {
           })
           console.error(e);
         }
-      }
+      },
+
     }
   }
 }

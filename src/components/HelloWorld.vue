@@ -184,6 +184,7 @@ const forms = ref({});
 
 let logic_contract;
 let proxy_contract;
+let admin_contract;
 
 let getFirstEvent = async function (proxyContractAddress) {
   let host = window.tronWeb.fullNode.host;
@@ -193,11 +194,20 @@ let getFirstEvent = async function (proxyContractAddress) {
   let txid = context.data[0].txID;
   let events = await window.tronWeb.getEventByTransactionID(txid);
   let newAdmin = events[0].result.newAdmin;
-  let implementation = events[2].result.implementation;
   newAdmin = window.tronWeb.address.fromHex(newAdmin);
-  implementation = window.tronWeb.address.fromHex(implementation)
+
+  // console.log(newAdmin)
+  admin_contract = await window.tronWeb.contract().at(newAdmin);
+
+  let proxyImplementation = await admin_contract.getProxyImplementation(proxyContractAddress).call({})
+  proxyImplementation = window.tronWeb.address.fromHex(proxyImplementation)
+
+  console.log(proxyImplementation)
+
+  // let implementation = events[2].result.implementation;
+  // implementation = window.tronWeb.address.fromHex(implementation)
   // console.log(newAdmin, implementation);
-  return [newAdmin, implementation];
+  return [newAdmin, proxyImplementation];
 }
 
 
@@ -281,6 +291,10 @@ export default {
         }
       },
       getTronscanHost: () => {
+        if(typeof window.tronWeb === 'undefined'){
+          return '#';
+        }
+
         let host = window.tronWeb.fullNode.host;
         if (host === 'https://api.shasta.trongrid.io') {
           return 'https://shasta.tronscan.io/#/address/';

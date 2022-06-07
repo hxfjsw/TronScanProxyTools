@@ -188,14 +188,16 @@ let proxy_contract;
 // let admin_contract;
 
 //proxyContractAddress, slot
-let getSlot = async function () {
+let getSlot = async function (proxyContractAddress) {
 
   let host = window.tronWeb.fullNode.host;
   let url = host + '/jsonrpc';
 
   let bsc_rpc_url = url
   const provider = new ethers.providers.JsonRpcProvider(bsc_rpc_url)
-  const proxy_address = "0x62fbc870513a20669cf59a90edd3ea987a808631"
+
+  const proxy_address = window.tronWeb.address.toHex(proxyContractAddress).substring(2);
+  console.log("proxy_address:",proxy_address)
   const admin_slot = ethers.BigNumber.from("0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103")
   const impl_slot = ethers.BigNumber.from("0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc")
 

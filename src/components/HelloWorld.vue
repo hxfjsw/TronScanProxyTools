@@ -170,7 +170,8 @@
 <script>
 import {ref} from 'vue'
 import {ElNotification} from 'element-plus'
-import axios from "axios";
+// import axios from "axios";
+import {ethers, utils} from "ethers"
 
 const proxyContractAddress = ref('TJzar3ayukrPcHDY7py7VYmkoeKvJ7sfwC');
 const logicContractAddress = ref('');
@@ -184,31 +185,61 @@ const forms = ref({});
 
 let logic_contract;
 let proxy_contract;
-let admin_contract;
+// let admin_contract;
 
-let getFirstEvent = async function (proxyContractAddress) {
+//proxyContractAddress, slot
+let getSlot = async function () {
+
   let host = window.tronWeb.fullNode.host;
-  let url = host + '/v1/contracts/' + proxyContractAddress + '/transactions?order_by=block_timestamp,asc&limit=1';
-  let response = await axios.get(url);
-  let context = response.data;
-  let txid = context.data[0].txID;
-  let events = await window.tronWeb.getEventByTransactionID(txid);
-  let newAdmin = events[0].result.newAdmin;
-  newAdmin = window.tronWeb.address.fromHex(newAdmin);
+  let url = host + '/jsonrpc';
 
-  // console.log(newAdmin)
-  admin_contract = await window.tronWeb.contract().at(newAdmin);
+  let bsc_rpc_url = url
+  const provider = new ethers.providers.JsonRpcProvider(bsc_rpc_url)
+  const proxy_address = "0x62fbc870513a20669cf59a90edd3ea987a808631"
+  const admin_slot = ethers.BigNumber.from("0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103")
+  const impl_slot = ethers.BigNumber.from("0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc")
 
-  let proxyImplementation = await admin_contract.getProxyImplementation(proxyContractAddress).call({})
-  proxyImplementation = window.tronWeb.address.fromHex(proxyImplementation)
 
-  console.log(proxyImplementation)
+  const admin_info = await provider.getStorageAt(proxy_address , admin_slot)
+  console.log("admin_info:",admin_info)
+  let admin_address = utils.getAddress("0x" + admin_info.substring(26))
+  console.log("admin_address:",admin_address)
+  admin_address =  window.tronWeb.address.fromHex(admin_address);
+  console.log("admin_address:",admin_address)
 
-  // let implementation = events[2].result.implementation;
-  // implementation = window.tronWeb.address.fromHex(implementation)
-  // console.log(newAdmin, implementation);
-  return [newAdmin, proxyImplementation];
+  const impl_info = await provider.getStorageAt(proxy_address , impl_slot)
+  console.log("impl_info:",impl_info)
+  let impl_address = utils.getAddress("0x" + impl_info.substring(26))
+  impl_address =  window.tronWeb.address.fromHex(impl_address);
+
+  console.log("impl_address:",impl_address)
+
+  return [admin_address,impl_address]
 }
+
+// let getFirstEvent = async function (proxyContractAddress) {
+//   let host = window.tronWeb.fullNode.host;
+//   let url = host + '/v1/contracts/' + proxyContractAddress + '/transactions?order_by=block_timestamp,asc&limit=1';
+//   let response = await axios.get(url);
+//   let context = response.data;
+//   let txid = context.data[0].txID;
+//   let events = await window.tronWeb.getEventByTransactionID(txid);
+//   let newAdmin = events[0].result.newAdmin;
+//   newAdmin = window.tronWeb.address.fromHex(newAdmin);
+//
+//   // console.log(newAdmin)
+//   admin_contract = await window.tronWeb.contract().at(newAdmin);
+//
+//   let proxyImplementation = await admin_contract.getProxyImplementation(proxyContractAddress).call({})
+//   proxyImplementation = window.tronWeb.address.fromHex(proxyImplementation)
+//
+//   console.log(proxyImplementation)
+//
+//   // let implementation = events[2].result.implementation;
+//   // implementation = window.tronWeb.address.fromHex(implementation)
+//   // console.log(newAdmin, implementation);
+//   return [newAdmin, proxyImplementation];
+// }
 
 
 export default {
@@ -291,7 +322,7 @@ export default {
         }
       },
       getTronscanHost: () => {
-        if(typeof window.tronWeb === 'undefined'){
+        if (typeof window.tronWeb === 'undefined') {
           return '#';
         }
 
@@ -306,11 +337,14 @@ export default {
 
         try {
 
-          let address = await getFirstEvent(proxyContractAddress.value);
+          // let address = await getFirstEvent(proxyContractAddress.value);
+          let slot = await getSlot(proxyContractAddress.value,);
+          adminContractAddress.value = slot[0]
+          logicContractAddress.value = slot[1]
 
-          adminContractAddress.value = address[0];
-          logicContractAddress.value = address[1];
-
+          // adminContractAddress.value = address[0];
+          // logicContractAddress.value = address[1];
+          //
           logic_contract = await window.tronWeb.contract().at(logicContractAddress.value);
 
           // proxy_contract = await window.tronWeb.contract().at(proxyContractAddress.value);
